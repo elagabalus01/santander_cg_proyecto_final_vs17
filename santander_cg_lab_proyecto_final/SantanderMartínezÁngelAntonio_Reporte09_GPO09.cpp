@@ -88,26 +88,31 @@ int main( )
     // OpenGL options
     glEnable( GL_DEPTH_TEST );
     
+
     // Setup and compile our shaders
-    Shader shader("Shaders/modelLoading.vs", "Shaders/modelLoading.frag");
-    //Shader shader( "Shaders/pruebas/cel.vs", "Shaders/pruebas/cel.frag" );
-    //Shader shader("Shaders/pruebas/cel_dirlight.vs", "Shaders/pruebas/cel_dirlight.frag");
+    //Shader shader("Shaders/modelLoading.vs", "Shaders/modelLoading.frag");
+    Shader shader( "Shaders/pruebas/cel_dirlight.vs", "Shaders/pruebas/cel_dirlight.frag" );
     
 	//Cargando modelos
 
-	//Model casa = (char*) "Models/proyecto/casa/casa.obj";
-	//Model cubo = (char*) "Models/control.obj";
-	//Model silla = (char*) "Models/proyecto/silla/silla.obj";
-	//Model lampara = (char*) "Models/proyecto/lampara/lampara.obj";
+	Model casa = (char*) "Models/proyecto/casa/casa.obj";
+	Model silla = (char*) "Models/proyecto/silla/silla.obj";
+	Model lampara = (char*) "Models/proyecto/lampara/lampara.obj";
 	//Model compu = (char*) "Models/proyecto/compu/old_monitor.obj";
-	//Model escritorio = (char*) "Models/proyecto/escritorio/escritorio.obj";
-	//Model cama = (char*) "Models/proyecto/cama/cama.obj";
+	Model escritorio = (char*) "Models/proyecto/escritorio/escritorio.obj";
+	Model cama = (char*) "Models/proyecto/cama/cama.obj";
 //	Model room = (char*) "Models/proyecto/room/room.obj";
-    Model puerta = (char*) "Models/proyecto/puerta/puerta.obj";
+
     Model room = (char*) "Models/proyecto/room_test/room.obj";
+    Model puerta = (char*) "Models/proyecto/puerta/puerta.obj";
     Model teclado = (char*) "Models/proyecto/compu/teclado.obj";
     Model nave = (char*) "Models/proyecto/nave/nave.obj";
-	
+
+    Poster atomo = Poster((char*)"Models/proyecto/poster/atomo.png",vertices,indices,sizeof(vertices),sizeof(indices));
+    atomo.makePoster();
+
+    Poster einstein = Poster((char*)"Models/proyecto/poster/einstein.png", vertices2, indices2, sizeof(vertices2), sizeof(indices2));
+    einstein.makePoster();
 
     // Draw in wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -136,8 +141,7 @@ int main( )
         glUniform3f(glGetUniformLocation(shader.Program, "light.diffuse"), 1.0f, 1.0f, 1.0f);
         glUniform3f(glGetUniformLocation(shader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 
-        //glUniform3f(glGetUniformLocation(shader.Program, "light.position"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
-        glUniform3f(glGetUniformLocation(shader.Program, "light.direction"), 0.0f,-1.0f,0.0f);
+        glUniform3f(glGetUniformLocation(shader.Program, "light.direction"), 1.0f,-1.0f,0.0f);
         glUniform3f(glGetUniformLocation(shader.Program, "viewPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
         
         glm::mat4 view = camera.GetViewMatrix();
@@ -157,7 +161,6 @@ int main( )
 		//}
 		//else {
         
-        /*
 			model = glm::mat4(1);
 			model = glm::translate(model, glm::vec3(4.9f, 2.85f, 5.0f)); // Translate it down a bit so it's at the center of the scene
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -176,35 +179,36 @@ int main( )
 			model = glm::mat4(1);
 			model = glm::translate(model, glm::vec3(3.0f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
 			silla.Draw(shader);
 
 			model = glm::mat4(1);
 			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -7.96f)); // Translate it down a bit so it's at the center of the scene
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
 			cama.Draw(shader);
 
 			model = glm::mat4(1);
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 			room.Draw(shader);
-			drawPoster();
-        */
-        room.Draw(shader);
+			atomo.drawPoster();
+            einstein.drawPoster();
+        
+		//}
+
         model = glm::translate(model, glm::vec3(-6.4f, 0.0f, -1.5f)); // Translate it down a bit so it's at the center of the scene
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         puerta.Draw(shader);
+
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(4.9f, 1.5f, 4.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         teclado.Draw(shader);
-        
+
+
         model = glm::mat4(1);
         model = glm::translate(model, glm::vec3(0.0f, 8.5f, 0.0f)); // Translate it down a bit so it's at the center of the scene
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         nave.Draw(shader);
-
-		//}
-
-
 		////ourModel.Draw( shader );
 		////Drawing models
 		////ourModel2.Draw(shader);
