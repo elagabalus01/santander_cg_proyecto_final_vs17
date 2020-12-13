@@ -40,6 +40,9 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
+//Animation variables
+GLfloat doorRotation = 0.0f;
+
 int main( )
 {
     // Init GLFW
@@ -101,9 +104,9 @@ int main( )
 	//Model compu = (char*) "Models/proyecto/compu/old_monitor.obj";
 	Model escritorio = (char*) "Models/proyecto/escritorio/escritorio.obj";
 	Model cama = (char*) "Models/proyecto/cama/cama.obj";
-//	Model room = (char*) "Models/proyecto/room/room.obj";
+    Model room = (char*) "Models/proyecto/room/room.obj";
 
-    Model room = (char*) "Models/proyecto/room_test/room.obj";
+//    Model room = (char*) "Models/proyecto/room_test/room.obj";
     Model puerta = (char*) "Models/proyecto/puerta/puerta.obj";
     Model teclado = (char*) "Models/proyecto/compu/teclado.obj";
     Model nave = (char*) "Models/proyecto/nave/nave.obj";
@@ -150,19 +153,17 @@ int main( )
         
         // Draw the loaded model
         glm::mat4 model(1);
-        
-		//model = glm::translate( model, glm::vec3( 0.0f, -1.75f, 0.0f ) ); // Translate it down a bit so it's at the center of the scene
-        //model = glm::scale( model, glm::vec3( 0.02f, 0.02f, 0.02f ) );	// It's a bit too big for our scene, so scale it down
-		//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        casa.Draw(shader);
 
-		glUniformMatrix4fv( glGetUniformLocation( shader.Program, "model" ), 1, GL_FALSE, glm::value_ptr( model ) );
+		
 		//if (camera.position.x < -7.0f) {
-		//casa.Draw(shader);
+		
 		//}
 		//else {
         
 			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(4.9f, 2.85f, 5.0f)); // Translate it down a bit so it's at the center of the scene
+			model = glm::translate(model, glm::vec3(4.9f, 2.8f, 5.0f)); // Translate it down a bit so it's at the center of the scene
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			lampara.Draw(shader);
 
@@ -172,17 +173,17 @@ int main( )
 			//compu.Draw(shader);
 
 			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(4.9f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
+			model = glm::translate(model, glm::vec3(4.51f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			escritorio.Draw(shader);
 
 			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(3.0f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
+			model = glm::translate(model, glm::vec3(2.5f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			silla.Draw(shader);
 
 			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -7.96f)); // Translate it down a bit so it's at the center of the scene
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -6.30f));
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			cama.Draw(shader);
 
@@ -194,19 +195,19 @@ int main( )
             einstein.drawPoster();
         
 		//}
-
-        model = glm::translate(model, glm::vec3(-6.4f, 0.0f, -1.5f)); // Translate it down a bit so it's at the center of the scene
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(-5.70f, 0.0f, -1.4f));
+        model = glm::rotate(model,glm::radians(doorRotation),glm::vec3(0.0f,1.0f,0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         puerta.Draw(shader);
 
         model = glm::mat4(1);
-        model = glm::translate(model, glm::vec3(4.9f, 1.5f, 4.0f));
+        model = glm::translate(model, glm::vec3(4.10f, 1.63f, 4.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         teclado.Draw(shader);
 
-
         model = glm::mat4(1);
-        model = glm::translate(model, glm::vec3(0.0f, 8.5f, 0.0f)); // Translate it down a bit so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(0.0f, 6.5f, 0.0f)); // Translate it down a bit so it's at the center of the scene
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         nave.Draw(shader);
 		////ourModel.Draw( shader );
@@ -270,6 +271,11 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
         {
             keys[key] = false;
         }
+    }
+
+    if (GLFW_KEY_1 == key)
+    {
+        doorRotation = 90.0f;
     }
 }
 
