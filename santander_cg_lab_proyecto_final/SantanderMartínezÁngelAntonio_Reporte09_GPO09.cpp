@@ -290,6 +290,15 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
     {
         doorRotation = 90.0f;
     }
+    
+    if (GLFW_KEY_Q == key)
+    {
+        camera.rotateYaw(-5.0f);
+    }
+    if (GLFW_KEY_E == key)
+    {
+        camera.rotateYaw(5.0f);
+    }
 }
 
 void MouseCallback( GLFWwindow *window, double xPos, double yPos )

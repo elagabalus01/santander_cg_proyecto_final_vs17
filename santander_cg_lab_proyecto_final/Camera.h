@@ -20,8 +20,8 @@ enum Camera_Movement
 };
 
 // Default camera values
-const GLfloat YAW = 0.0f;
-const GLfloat PITCH = 0.0f;
+const GLfloat YAW = -180.0f; // LEFT-RIGHT-FRONT-BACK rotation
+const GLfloat PITCH = 0.0f; // up-down rotation
 const GLfloat SPEED = 20.0f;
 const GLfloat SENSITIVTY = 0.25f;
 const GLfloat ZOOM = 45.0f;
@@ -131,6 +131,10 @@ public:
 		return this->front;
 	}
 
+    void rotateYaw(GLfloat deltaYaw) {
+        this->yaw += deltaYaw;
+        this->updateCameraVectors();
+    }
 private:
 	// Camera Attributes
 	
