@@ -142,6 +142,8 @@
     <ClInclude Include="modelos.h" />
     <ClInclude Include="Modelo_Material.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assimp-vc140-mt.dll" />

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SOIL2/SOIL2.h>
 #include <SOIL2/stb_image.h>
-int myVar=20;
+
 float vertices[] =
 	{
 		// Positions            // Normals              // Texture Coords
@@ -70,6 +70,7 @@ public:
 		glBindVertexArray(0);
 
 		glGenTextures(1, &this->texture1);
+        glBindTexture(GL_TEXTURE_2D, this->texture1);
 
 		int textureWidth, textureHeight, nrChannels;
 		stbi_set_flip_vertically_on_load(true);
@@ -82,7 +83,7 @@ public:
 		
 		// Diffuse map
 		image = stbi_load(this->path, &textureWidth, &textureHeight, &nrChannels, 0);
-		glBindTexture(GL_TEXTURE_2D, this->texture1);
+		
 		if (image)
 		{
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
@@ -111,7 +112,3 @@ public:
 
 	}
 };
-
-void printSaludo() {
-	std::cout << "Se cargo la librería de modelos.h" << std::endl;
-}

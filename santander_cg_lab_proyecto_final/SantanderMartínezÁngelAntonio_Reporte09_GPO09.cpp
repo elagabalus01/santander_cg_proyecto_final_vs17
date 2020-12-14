@@ -21,6 +21,7 @@
 // Other Libs
 #include <SOIL2/SOIL2.h>
 #include "modelos.h"
+#include "SkyBox.h"
 
 // Properties
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -34,7 +35,7 @@ void DoMovement( );
 // Camera
 Camera camera( glm::vec3( -50.0f, 0.0f, 0.0f ), glm::vec3(0.0f,1.0f,0.0f));
 bool keys[1024];
-GLfloat lastX = 400, lastY = 300;
+double lastX = 400, lastY = 300;
 bool firstMouse = true;
 
 GLfloat deltaTime = 0.0f;
@@ -95,6 +96,7 @@ int main( )
     // Setup and compile our shaders
     //Shader shader("Shaders/modelLoading.vs", "Shaders/modelLoading.frag");
     Shader shader( "Shaders/pruebas/cel_dirlight.vs", "Shaders/pruebas/cel_dirlight.frag" );
+    Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
     
 	//Cargando modelos
 
@@ -111,7 +113,11 @@ int main( )
     Model teclado = (char*) "Models/proyecto/compu/teclado.obj";
     Model nave = (char*) "Models/proyecto/nave/nave.obj";
 
-    Poster atomo = Poster((char*)"Models/proyecto/poster/atomo.png",vertices,indices,sizeof(vertices),sizeof(indices));
+    SkyBox fondo((char*)"SkyBox/right.tga", (char*)"SkyBox/left.tga",(char*)"SkyBox/top.tga",
+        (char*)"SkyBox/bottom.tga", (char*)"SkyBox/back.tga", (char*)"SkyBox/front.tga",
+        skyboxVertices_1,sizeof(skyboxVertices_1));
+
+    Poster atomo = Poster((char*)"Models/proyecto/poster/atomo.png", vertices, indices, sizeof(vertices), sizeof(indices));
     atomo.makePoster();
 
     Poster einstein = Poster((char*)"Models/proyecto/poster/einstein.png", vertices2, indices2, sizeof(vertices2), sizeof(indices2));
@@ -126,7 +132,7 @@ int main( )
     while( !glfwWindowShouldClose( window ) )
     {
         // Set frame time
-        GLfloat currentFrame = glfwGetTime( );
+        GLfloat currentFrame = (GLfloat)glfwGetTime( );
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
@@ -220,6 +226,13 @@ int main( )
 		//chair.Draw(shader);
 		//lampara.Draw(shader);
 		
+        glBindVertexArray(0);
+        //SKYBOX
+        SkyBoxshader.Use();
+        view = glm::mat4(glm::mat3(camera.GetViewMatrix()));	// Remove any translation component of the view matrix
+        glUniformMatrix4fv(glGetUniformLocation(SkyBoxshader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(glGetUniformLocation(SkyBoxshader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        fondo.Draw();
         // Swap the buffers
         glfwSwapBuffers( window );
     }
