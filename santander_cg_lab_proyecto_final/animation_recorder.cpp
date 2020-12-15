@@ -47,7 +47,7 @@ GLfloat lastFrame = 0.0f;
 KeyFrameAnimation animacion = KeyFrameAnimation();
 //Model Position  for animation
 float pos_x, pos_y, pos_z, rot_x,rot_y,rot_z;
-
+char *path_animation = (char*) "animaciones/prueba.animacion";
 int main( ){
     //animacion.loadAnimation((char*)"prueba.animacion");
     // Init GLFW
@@ -222,7 +222,7 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
     }
     if (keys[GLFW_KEY_1])
     {
-        animacion.saveFrame((char*)"prueba.animacion",pos_x, pos_y, pos_z, rot_x, rot_y, rot_z);
+        animacion.saveFrame(path_animation,pos_x, pos_y, pos_z, rot_x, rot_y, rot_z);
     }
     if (keys[GLFW_KEY_2])
     {
