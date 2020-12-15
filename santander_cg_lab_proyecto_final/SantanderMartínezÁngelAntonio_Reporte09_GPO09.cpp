@@ -187,7 +187,7 @@ int main( )
 			escritorio.Draw(shader);
 
 			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(2.5f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
+			model = glm::translate(model, glm::vec3(2.5f, 0.0f, 4.0f)); // silla
 			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			silla.Draw(shader);
 

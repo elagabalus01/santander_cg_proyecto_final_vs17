@@ -47,9 +47,13 @@ GLfloat lastFrame = 0.0f;
 KeyFrameAnimation animacion = KeyFrameAnimation();
 //Model Position  for animation
 float pos_x, pos_y, pos_z, rot_x,rot_y,rot_z;
-char *path_animation = (char*) "animaciones/prueba.animacion";
+char *path_animation = (char*) "animaciones/silla.animacion";
+char *modelo_path = (char*) "Models/proyecto/silla/silla.obj";
+
+int frame=0;
+void setFrame();
 int main( ){
-    //animacion.loadAnimation((char*)"prueba.animacion");
+    //animacion.loadAnimation(path_animation);
     // Init GLFW
     glfwInit();
     // Set all the required options for GLFW
@@ -104,7 +108,7 @@ int main( ){
     
 	//Cargando modelos
     Model room = (char*) "Models/proyecto/room/room.obj";
-    Model modelo = (char*) "Models/proyecto/nave/nave.obj";
+    Model modelo = modelo_path;
 
     // Draw in wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -147,7 +151,11 @@ int main( ){
         room.Draw(shader);
         
         model = glm::mat4(1);
-        model = glm::translate(model, glm::vec3(0.0f, 6.5f, 0.0f));
+        //Posicion por defecto
+        //model = glm::translate(model, glm::vec3(0.0f, 6.5f, 0.0f)); //Nave
+        //model = glm::translate(model, glm::vec3(-5.70f, 0.0f, -1.4f)); //puerta
+        //model = glm::translate(model, glm::vec3(2.5f, 0.0f, 4.0f)); // silla
+
         model = glm::translate(model, glm::vec3(pos_x,pos_y,pos_z));
         model = glm::rotate(model,glm::radians(rot_x),glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(rot_y), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -262,7 +270,39 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
     if (keys[GLFW_KEY_O]) {
         pos_y -= 0.2;
     }
+    if (keys[GLFW_KEY_KP_8]) {
+        rot_z += 5.0f;
+    }
+    if (keys[GLFW_KEY_KP_5]) {
+        rot_z -= 5.0f;
+    }
+    if (keys[GLFW_KEY_KP_6]) {
+        rot_x += 5.0f;
+    }
+    if (keys[GLFW_KEY_KP_4]) {
+        rot_x -= 5.0f;
+    }
 
+    if (keys[GLFW_KEY_KP_7]) {
+        rot_y += 5.0f;
+    }
+    if (keys[GLFW_KEY_KP_9]) {
+        rot_y -= 5.0f;
+    }
+    if (keys[GLFW_KEY_Z]) {
+        frame +=1;
+        if (frame > animacion.KeyFrame.size() - 1) {
+            frame = 0;
+        }
+        setFrame();
+    }
+    if (keys[GLFW_KEY_C]) {
+        frame -= 1;
+        if (frame <0 ) {
+            frame = animacion.KeyFrame.size()-1;
+        }
+        setFrame();
+    }
 }
 
 void MouseCallback( GLFWwindow *window, double xPos, double yPos )
@@ -282,4 +322,12 @@ void MouseCallback( GLFWwindow *window, double xPos, double yPos )
     
     camera.ProcessMouseMovement( xOffset, yOffset );
 }
+void setFrame() {
+    pos_x=animacion.KeyFrame[frame].posX;
+    pos_y = animacion.KeyFrame[frame].posY;
+    pos_z = animacion.KeyFrame[frame].posZ;
+    rot_x = animacion.KeyFrame[frame].rotX;
+    rot_y = animacion.KeyFrame[frame].rotY;
+    rot_z = animacion.KeyFrame[frame].rotZ;
 
+}

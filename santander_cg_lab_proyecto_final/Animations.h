@@ -105,12 +105,12 @@ typedef struct _frame
 
 class KeyFrameAnimation {
 private:
-    GLfloat posX, posY, posZ, incX, incY, incZ, rotX, rotXInc, rotY, rotYInc, rotZ, rotZInc;
     int i_max_steps = 190;
     int i_curr_steps = 0;
     //int num_freames;
     int playIndex = 0;
 public:
+    float posX, posY, posZ, incX, incY, incZ, rotX, rotXInc, rotY, rotYInc, rotZ, rotZInc;
     vector<FRAME> KeyFrame = vector<FRAME>();
     GLint FrameIndex = 0;
     bool play = false;
