@@ -16,11 +16,13 @@ enum Camera_Movement
 	FORWARD,
 	BACKWARD,
 	LEFT,
-	RIGHT
+	RIGHT,
+    UP,
+    DOWN
 };
 
 // Default camera values
-const GLfloat YAW = -180.0f; // LEFT-RIGHT-FRONT-BACK rotation
+const GLfloat YAW = 0.0f; // LEFT-RIGHT-FRONT-BACK rotation
 const GLfloat PITCH = 0.0f; // up-down rotation
 const GLfloat SPEED = 20.0f;
 const GLfloat SENSITIVTY = 0.25f;
@@ -81,6 +83,15 @@ public:
 		{
 			this->position += this->right * velocity;
 		}
+        /* Agregando movimieto en el eje y*/
+        if (direction == UP)
+        {
+            this->position += this->up * velocity;
+        }
+        if (direction == DOWN)
+        {
+            this->position -= this->up * velocity;
+        }
 	}
 
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.

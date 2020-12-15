@@ -11,6 +11,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
+//#include "Modelo_Material.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -23,6 +24,7 @@
 #include "SkyBox.h"
 #include "Animations.h"
 
+
 // Properties
 const GLuint WIDTH = 800, HEIGHT = 600;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
@@ -33,7 +35,7 @@ void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
 
 // Camera
-Camera camera( glm::vec3( -50.0f, 0.0f, 0.0f ), glm::vec3(0.0f,1.0f,0.0f));
+Camera camera( glm::vec3( -5.0f, 4.0f, 0.0f ), glm::vec3(0.0f,1.0f,0.0f));
 bool keys[1024];
 double lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -43,12 +45,15 @@ GLfloat lastFrame = 0.0f;
 
 //Animation variables
 GLfloat doorRotation = 0.0f;
-GLboolean active_nave_animation = false;
+GLboolean active_nave_animation=false;
 AnimationCircuit nave_animation = AnimationCircuit();
 
 int main( )
 {
+    //printf("Valor de estado antes de emoezar el gameloop %i",nave_animation.state);
+    nave_animation.getState();
     setAnimation();
+    nave_animation.getState();
     // Init GLFW
     glfwInit();
     // Set all the required options for GLFW
@@ -102,20 +107,21 @@ int main( )
     Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
     
 	//Cargando modelos
-
-	Model casa = (char*) "Models/proyecto/casa/casa.obj";
+    Model room = (char*) "Models/proyecto/room/room.obj";
+    Model nave = (char*) "Models/proyecto/nave/nave.obj";
+	/*Model casa = (char*) "Models/proyecto/casa/casa.obj";
 	Model silla = (char*) "Models/proyecto/silla/silla.obj";
 	Model lampara = (char*) "Models/proyecto/lampara/lampara.obj";
-	//Model compu = (char*) "Models/proyecto/compu/old_monitor.obj";
+	Model compu = (char*) "Models/proyecto/compu/old_monitor.obj";
 	Model escritorio = (char*) "Models/proyecto/escritorio/escritorio.obj";
 	Model cama = (char*) "Models/proyecto/cama/cama.obj";
-    Model room = (char*) "Models/proyecto/room/room.obj";
-
-//    Model room = (char*) "Models/proyecto/room_test/room.obj";
+    
     Model puerta = (char*) "Models/proyecto/puerta/puerta.obj";
     Model teclado = (char*) "Models/proyecto/compu/teclado.obj";
-    Model nave = (char*) "Models/proyecto/nave/nave.obj";
+    
+    */
 
+    /*
     SkyBox fondo((char*)"SkyBox/right.tga", (char*)"SkyBox/left.tga",(char*)"SkyBox/top.tga",
         (char*)"SkyBox/bottom.tga", (char*)"SkyBox/back.tga", (char*)"SkyBox/front.tga",
         skyboxVertices_1,sizeof(skyboxVertices_1));
@@ -125,10 +131,13 @@ int main( )
 
     Poster einstein = Poster((char*)"Models/proyecto/poster/einstein.png", vertices2, indices2, sizeof(vertices2), sizeof(indices2));
     einstein.makePoster();
+    */
 
     // Draw in wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
+    
+
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
     
     // Game loop
@@ -159,90 +168,25 @@ int main( )
         glm::mat4 view = camera.GetViewMatrix();
         glUniformMatrix4fv( glGetUniformLocation( shader.Program, "projection" ), 1, GL_FALSE, glm::value_ptr( projection ) );
         glUniformMatrix4fv( glGetUniformLocation( shader.Program, "view" ), 1, GL_FALSE, glm::value_ptr( view ) );
-        
-        // Draw the loaded model
         glm::mat4 model(1);
-        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        casa.Draw(shader);
 
-		
-		//if (camera.position.x < -7.0f) {
-		
-		//}
-		//else {
+        model = glm::mat4(1);
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        room.Draw(shader);
         
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(4.9f, 2.8f, 5.0f)); // Translate it down a bit so it's at the center of the scene
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			lampara.Draw(shader);
-
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // Translate it down a bit so it's at the center of the scene
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			//compu.Draw(shader);
-
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(4.51f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			escritorio.Draw(shader);
-
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(2.5f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			silla.Draw(shader);
-
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -6.30f));
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			cama.Draw(shader);
-
-			model = glm::mat4(1);
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-			room.Draw(shader);
-			atomo.drawPoster();
-            einstein.drawPoster();
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(0.0f, 6.5f, 0.0f)); // Translate it down a bit so it's at the center of the scene
         
-		//}
-        model = glm::mat4(1);
-        model = glm::translate(model, glm::vec3(-5.70f, 0.0f, -1.4f));
-        model = glm::rotate(model,glm::radians(doorRotation),glm::vec3(0.0f,1.0f,0.0f));
-        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        puerta.Draw(shader);
-
-        model = glm::mat4(1);
-        model = glm::translate(model, glm::vec3(4.10f, 1.63f, 4.0f));
-        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        teclado.Draw(shader);
-
-        model = glm::mat4(1);
-        model = glm::translate(model, glm::vec3(0.0f, 6.5f, 0.0f));
         if (active_nave_animation) {
             nave_animation.animacionCircuito(&model);
         }
-        if(animacion_avanzada_nave.play) {
+        
+        if (animacion_avanzada_nave.play) {
             animacion_avanzada_nave.animacion(&model);
         }
-
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         nave.Draw(shader);
-		////ourModel.Draw( shader );
-		////Drawing models
-		////ourModel2.Draw(shader);
-		//
-		//ourModel3.Draw(shader);
-		//modelos[selection].Draw(shader);
-		
-		//chair.Draw(shader);
-		//lampara.Draw(shader);
-		
-        glBindVertexArray(0);
-        //SKYBOX
-        SkyBoxshader.Use();
-        view = glm::mat4(glm::mat3(camera.GetViewMatrix()));	// Remove any translation component of the view matrix
-        glUniformMatrix4fv(glGetUniformLocation(SkyBoxshader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(SkyBoxshader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        fondo.Draw();
+
         // Swap the buffers
         glfwSwapBuffers( window );
     }
@@ -252,27 +196,27 @@ int main( )
 }
 
 // Moves/alters the camera positions based on user input
-void DoMovement()
+void DoMovement( )
 {
     // Camera controls
-    if (keys[GLFW_KEY_W])
+    if ( keys[GLFW_KEY_W])
     {
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        camera.ProcessKeyboard( FORWARD, deltaTime );
     }
-
-    if (keys[GLFW_KEY_S])
+    
+    if ( keys[GLFW_KEY_S])
     {
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        camera.ProcessKeyboard( BACKWARD, deltaTime );
     }
-
-    if (keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT])
+    
+    if ( keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT] )
     {
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        camera.ProcessKeyboard( LEFT, deltaTime );
     }
-
-    if (keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT])
+    
+    if ( keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT] )
     {
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        camera.ProcessKeyboard( RIGHT, deltaTime );
     }
     /*Agregando movimiento en el eje y*/
 
@@ -293,38 +237,6 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
     {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
-
-    if (GLFW_KEY_1 == key)
-    {
-        doorRotation = 90.0f;
-    }
-    if (GLFW_KEY_2 == key && GLFW_PRESS == action)
-    {
-        active_nave_animation = !active_nave_animation;
-        if (!active_nave_animation) {
-            puts("Desactivada");
-            nave_animation.reset();
-        }
-        else {
-            puts("Animación activada");
-        }
-    }
-    if (GLFW_KEY_3 == key && GLFW_PRESS == action) {
-        animacion_avanzada_nave.play = !animacion_avanzada_nave.play;
-        if (animacion_avanzada_nave.play) {
-            animacion_avanzada_nave.reset();
-            animacion_avanzada_nave.interpolation();
-        }
-    }
-    if (GLFW_KEY_Q == key)
-    {
-        camera.rotateYaw(-5.0f);
-    }
-    if (GLFW_KEY_E == key)
-    {
-        camera.rotateYaw(5.0f);
-    }
-
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
@@ -335,6 +247,40 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
         {
             keys[key] = false;
         }
+    }
+    if (GLFW_KEY_1 == key)
+    {
+        doorRotation = 90.0f;
+    }
+    if (keys[GLFW_KEY_2])
+    {
+        active_nave_animation=!active_nave_animation;
+        if (!active_nave_animation) {
+            puts("La animacion esta desactivada");
+            nave_animation.reset();
+        }
+        else {
+            puts("La animacion esta activa");
+        }
+        
+    }
+    if (keys[GLFW_KEY_3]) {
+        animacion_avanzada_nave.play = !animacion_avanzada_nave.play;
+        if (animacion_avanzada_nave.play) {
+            animacion_avanzada_nave.reset();
+            animacion_avanzada_nave.interpolation();
+            puts("Comienza a correr la animacion");
+        }
+    }
+
+    
+    if (GLFW_KEY_Q == key)
+    {
+        camera.rotateYaw(-5.0f);
+    }
+    if (GLFW_KEY_E == key)
+    {
+        camera.rotateYaw(5.0f);
     }
 }
 

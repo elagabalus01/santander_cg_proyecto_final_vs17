@@ -42,6 +42,9 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Animations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="glew32.dll" />
@@ -51,7 +54,7 @@
     <ClCompile Include="Modelo_Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SantanderMartínezÁngelAntonio_Reporte09_GPO09.cpp">
+    <ClCompile Include="pruebas_low_content.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
