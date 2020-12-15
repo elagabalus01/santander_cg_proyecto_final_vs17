@@ -3,7 +3,21 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#define MAX_FRAMES 4
+#include <vector>
+
+vector<string> splitString(string cadena, char delimiter) {
+    vector <string> tokens;
+    stringstream stream_cadena(cadena);
+    string aux;
+
+    // Tokenizing w.r.t. space ' ' 
+    while (getline(stream_cadena, aux, delimiter))
+    {
+        tokens.push_back(aux);
+    }
+    return tokens;
+}
+
 class AnimationCircuit {
 private:
     GLfloat traslacion_x = 0.0f, traslacion_z = 0.0f, rotation = 0.0f, velocidad = 0.02f;
@@ -72,57 +86,83 @@ typedef struct _frame
     float incX;		//Variable para IncrementoX
     float incY;		//Variable para IncrementoY
     float incZ;		//Variable para IncrementoZ
-    float rotIzq;
-    float rotIzqInc;
+    float rotX;
+    float rotXInc;
+    float rotY;
+    float rotYInc;
+    float rotZ;
+    float rotZInc;
+    _frame(float _posX, float _posY, float _posZ, float _rotX,float _rotY,float _rotZ) {
+        posX = _posX;
+        posY = _posY;
+        posZ = _posZ;
+        rotX = _rotX;
+        rotY = _rotY;
+        rotZ = _rotZ;
+    }
 
 }FRAME;
 
 class KeyFrameAnimation {
 private:
-    GLfloat posX, posY, posZ, incX, incY, incZ, rotIzq, rotIzqInc;
+    GLfloat posX, posY, posZ, incX, incY, incZ, rotX, rotXInc, rotY, rotYInc, rotZ, rotZInc;
     int i_max_steps = 190;
     int i_curr_steps = 0;
     //int num_freames;
     int playIndex = 0;
 public:
-    FRAME KeyFrame[MAX_FRAMES];
+    vector<FRAME> KeyFrame = vector<FRAME>();
     GLint FrameIndex = 0;
     bool play = false;
     KeyFrameAnimation() {
         //Initializing the animation
-        for (int i = 0; i < MAX_FRAMES; i++)
+        for (int i = 0; i < KeyFrame.size(); i++)
         {
             KeyFrame[i].posX = 0;
             KeyFrame[i].incX = 0;
             KeyFrame[i].incY = 0;
             KeyFrame[i].incZ = 0;
-            KeyFrame[i].rotIzq = 0;
-            KeyFrame[i].rotIzqInc = 0;
+            KeyFrame[i].rotX = 0;
+            KeyFrame[i].rotXInc = 0;
+            KeyFrame[i].rotY = 0;
+            KeyFrame[i].rotYInc = 0;
+            KeyFrame[i].rotZ = 0;
+            KeyFrame[i].rotZInc = 0;
         }
     }
-    /*
-    void saveFrame(void)
-    {
-
-        printf("frameindex %d\n", FrameIndex);
-
-        KeyFrame[FrameIndex].posX = posX;
-        KeyFrame[FrameIndex].posY = posY;
-        KeyFrame[FrameIndex].posZ = posZ;
-
-        KeyFrame[FrameIndex].rotRodIzq = rotRodIzq;
-
-
-        FrameIndex++;
+    void loadAnimation(char* path) {
+        string line;
+        vector<string> row;
+        ifstream file(path);
+        while (getline(file, line)) {
+            row = splitString(line, ',');
+            KeyFrame.push_back(
+                FRAME(
+                    stof(row[0]), stof(row[1]), stof(row[2]), stof(row[3]), stof(row[4]), stof(row[5])
+                )
+            );
+            printf("Frame tras(%.2f,%.2f,%.2f) rot(%.2f)\n", stof(row[0]), stof(row[1]), stof(row[2]), stof(row[3]));
+        }
+        file.close();
+        cout << "Numero de frames " << KeyFrame.size() << endl;
     }
-    */
+    void saveFrame(char *path,float pos_x,float pos_y,float pos_z,float rot_x, float rot_y, float rot_z)
+    {
+        ofstream file;
+        KeyFrame.push_back(FRAME(pos_x,pos_y,pos_z,rot_x, rot_y, rot_z));
+        file.open(path, ios_base::app);
+        file<<pos_x<<","<<pos_y<<","<<pos_z<<","<<rot_x<< ","<< rot_y << ","<<rot_z << endl;
+        file.close();
+    }
     void resetElements(void)
     {
         posX = KeyFrame[0].posX;
         posY = KeyFrame[0].posY;
         posZ = KeyFrame[0].posZ;
 
-        rotIzq = KeyFrame[0].rotIzq;
+        rotX = KeyFrame[0].rotX;
+        rotY = KeyFrame[0].rotY;
+        rotZ = KeyFrame[0].rotZ;
 
     }
 
@@ -132,7 +172,9 @@ public:
         KeyFrame[playIndex].incY = (KeyFrame[playIndex + 1].posY - KeyFrame[playIndex].posY) / i_max_steps;
         KeyFrame[playIndex].incZ = (KeyFrame[playIndex + 1].posZ - KeyFrame[playIndex].posZ) / i_max_steps;
 
-        KeyFrame[playIndex].rotIzqInc = (KeyFrame[playIndex + 1].rotIzq - KeyFrame[playIndex].rotIzq) / i_max_steps;
+        KeyFrame[playIndex].rotXInc = (KeyFrame[playIndex + 1].rotX - KeyFrame[playIndex].rotX) / i_max_steps;
+        KeyFrame[playIndex].rotYInc = (KeyFrame[playIndex + 1].rotY - KeyFrame[playIndex].rotY) / i_max_steps;
+        KeyFrame[playIndex].rotZInc = (KeyFrame[playIndex + 1].rotZ - KeyFrame[playIndex].rotZ) / i_max_steps;
     }
     void reset() {
         playIndex = 0;
@@ -145,7 +187,7 @@ public:
             cout <<"Index: "<< playIndex << "Frame: " << i_curr_steps << endl;
             if (i_curr_steps >= i_max_steps){
                 playIndex++;
-                if (playIndex > FrameIndex-1)	//end of total animation?
+                if (playIndex > KeyFrame.size()-2)	//end of total animation?
                 {
                     printf("termina anim\n");
                     playIndex = 0;
@@ -165,43 +207,17 @@ public:
                 posY += KeyFrame[playIndex].incY;
                 posZ += KeyFrame[playIndex].incZ;
 
-                rotIzq += KeyFrame[playIndex].rotIzqInc;
+                rotX += KeyFrame[playIndex].rotXInc;
+                rotY += KeyFrame[playIndex].rotYInc;
+                rotZ += KeyFrame[playIndex].rotZInc;
 
-                cout << "x "<< posX << " y " << posY << " Z " << posZ << endl;
                 i_curr_steps++;
             }
             *model = glm::translate(*model, glm::vec3(posX, posY, posZ));
-            *model = glm::rotate(*model, glm::radians(rotIzq), glm::vec3(0.0f, 1.0f, 0.0f));
+            *model = glm::rotate(*model, glm::radians(rotX), glm::vec3(1.0f, 0.0f, 0.0f));
+            *model = glm::rotate(*model, glm::radians(rotY), glm::vec3(0.0f, 1.0f, 0.0f));
+            *model = glm::rotate(*model, glm::radians(rotZ), glm::vec3(0.0f, 0.0f, 1.0f));
         }
         
     }
 };
-KeyFrameAnimation animacion_avanzada_nave = KeyFrameAnimation();
-void setAnimation() {
-    animacion_avanzada_nave.KeyFrame[0].posX = 0.0f;
-    animacion_avanzada_nave.KeyFrame[0].posY = 0.0f;
-    animacion_avanzada_nave.KeyFrame[0].posZ = 0.0f;
-    animacion_avanzada_nave.KeyFrame[0].rotIzq = 0.0f;
-    
-    animacion_avanzada_nave.KeyFrame[1].posX = -5.0f;
-    animacion_avanzada_nave.KeyFrame[1].posY = 0.0f;
-    animacion_avanzada_nave.KeyFrame[1].posZ = 0.0f;
-    animacion_avanzada_nave.KeyFrame[1].rotIzq = 0.0f;
-    
-    animacion_avanzada_nave.KeyFrame[2].posX = -5.0f;
-    animacion_avanzada_nave.KeyFrame[2].posY = 0.0f;
-    animacion_avanzada_nave.KeyFrame[2].posZ = 5.0f;
-    animacion_avanzada_nave.KeyFrame[2].rotIzq = 90.0f;
-
-    animacion_avanzada_nave.KeyFrame[3].posX = 5.0f;
-    animacion_avanzada_nave.KeyFrame[3].posY = 0.0f;
-    animacion_avanzada_nave.KeyFrame[3].posZ = 0.0f;
-    animacion_avanzada_nave.KeyFrame[3].rotIzq = 180.0f;
-    
-    animacion_avanzada_nave.KeyFrame[4].posX = 0.0f;
-    animacion_avanzada_nave.KeyFrame[4].posY = 0.0f;
-    animacion_avanzada_nave.KeyFrame[4].posZ = 0.0f;
-    animacion_avanzada_nave.KeyFrame[4].rotIzq = 270.0f;
-
-    //animacion_avanzada_nave.FrameIndex = 4;
-}

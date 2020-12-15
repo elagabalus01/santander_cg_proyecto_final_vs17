@@ -54,7 +54,7 @@
     <ClCompile Include="Modelo_Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pruebas_low_content.cpp">
+    <ClCompile Include="animation_recorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
