@@ -11,6 +11,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Modelo_Material.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -33,21 +34,67 @@ void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
 
 // Camera
-Camera camera( glm::vec3( -50.0f, 0.0f, 0.0f ), glm::vec3(0.0f,1.0f,0.0f));
+Camera camera( glm::vec3( -25.0f, 5.0f, 0.0f ), glm::vec3(0.0f,1.0f,0.0f));
 bool keys[1024];
 double lastX = 400, lastY = 300;
 bool firstMouse = true;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
-
+int num_steps_robot_animation = 40;
 //Animation variables
 GLboolean active_nave_animation = false;
 AnimationCircuit nave_animation = AnimationCircuit();
 
-KeyFrameAnimation puerta_animacion = KeyFrameAnimation();
-KeyFrameAnimation silla_animacion = KeyFrameAnimation();
-KeyFrameAnimation nave_animacion = KeyFrameAnimation();
+KeyFrameAnimation puerta_animacion = KeyFrameAnimation(250);
+KeyFrameAnimation silla_animacion = KeyFrameAnimation(60);
+KeyFrameAnimation nave_animacion = KeyFrameAnimation(30);
+//Head Animation
+//Animation object
+KeyFrameAnimation head_animation = KeyFrameAnimation(num_steps_robot_animation);
+//Animation path
+char* head_animation_file = (char*) "animaciones/robot/cabeza.animacion";
+//Head position
+float head_rot_y = 0.0f;
+
+//body Animation
+//Animation object
+KeyFrameAnimation body_animation = KeyFrameAnimation(num_steps_robot_animation);
+//Animation path
+char* body_animation_file = (char*) "animaciones/robot/cuerpo.animacion";
+//Body position
+float body_rot_y = 0.0f;
+float body_pos_x = 0.0f;
+float body_pos_z = 0.0f;
+
+//Right arm animation
+KeyFrameAnimation right_arm_animation = KeyFrameAnimation(num_steps_robot_animation);
+//Animation path
+char* right_arm_animation_file = (char*) "animaciones/robot/brazo_derecho.animacion";
+//Arm position
+float righ_arm_rot_z = 0.0f;
+
+//Left arm animation
+KeyFrameAnimation left_arm_animation = KeyFrameAnimation(num_steps_robot_animation);
+//Animation path
+char* left_arm_animation_file = (char*) "animaciones/robot/brazo_izquiedo.animacion";
+//Arm position
+float left_arm_rot_z = 0.0f;
+
+
+//Right leg animation
+KeyFrameAnimation right_leg_animation = KeyFrameAnimation(num_steps_robot_animation);
+//Animation path
+char* right_leg_animation_file = (char*) "animaciones/robot/pierna_derecha.animacion";
+//leg position
+float righ_leg_rot_z = 0.0f;
+
+//Left leg animation
+KeyFrameAnimation left_leg_animation = KeyFrameAnimation(num_steps_robot_animation);
+//Animation path
+char* left_leg_animation_file = (char*) "animaciones/robot/pierna_izquieda.animacion";
+//Leg position
+float left_leg_rot_z = 0.0f;
 
 int main( )
 {
@@ -59,6 +106,13 @@ int main( )
     
     nave_animacion.loadAnimation((char*) "animaciones/nave.animacion");
 
+    //Animacion robot
+    head_animation.loadAnimation(head_animation_file);
+    body_animation.loadAnimation(body_animation_file);
+    right_arm_animation.loadAnimation(right_arm_animation_file);
+    left_arm_animation.loadAnimation(left_arm_animation_file);
+    right_leg_animation.loadAnimation(right_leg_animation_file);
+    left_leg_animation.loadAnimation(left_leg_animation_file);
     // Init GLFW
     glfwInit();
     // Set all the required options for GLFW
@@ -110,14 +164,14 @@ int main( )
     //Shader shader("Shaders/modelLoading.vs", "Shaders/modelLoading.frag");
     Shader shader( "Shaders/pruebas/cel_dirlight.vs", "Shaders/pruebas/cel_dirlight.frag" );
     Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
-    
+    Shader material_shader("Shaders/pruebas/cel_material_dirlight.vs", "Shaders/pruebas/cel_material_dirlight.frag");
 	//Cargando modelos
 
 	Model casa = (char*) "Models/proyecto/casa/casa.obj";
-	Model silla = (char*) "Models/proyecto/silla/silla.obj";
 	Model lampara = (char*) "Models/proyecto/lampara/lampara.obj";
 	Model compu = (char*) "Models/proyecto/compu/pantalla.obj";
 	Model escritorio = (char*) "Models/proyecto/escritorio/escritorio.obj";
+    Model silla = (char*) "Models/proyecto/silla/silla.obj";
 	Model cama = (char*) "Models/proyecto/cama/cama.obj";
     Model room = (char*) "Models/proyecto/room/room.obj";
 
@@ -126,6 +180,12 @@ int main( )
     Model teclado = (char*) "Models/proyecto/compu/teclado.obj";
     Model nave = (char*) "Models/proyecto/nave/nave.obj";
 
+    //MODELO DEL ROBOT
+    Modelo_Material cuerpo = (char*) "Models/proyecto/robot/body.obj";
+    Modelo_Material cabeza = (char*) "Models/proyecto/robot/head.obj";
+    Modelo_Material brazo = (char*) "Models/proyecto/robot/right_arm.obj";
+    Modelo_Material pierna = (char*) "Models/proyecto/robot/leg.obj";
+    //SKYBOx
     SkyBox fondo((char*)"SkyBox/right.tga", (char*)"SkyBox/left.tga",(char*)"SkyBox/top.tga",
         (char*)"SkyBox/bottom.tga", (char*)"SkyBox/back.tga", (char*)"SkyBox/front.tga",
         skyboxVertices_1,sizeof(skyboxVertices_1));
@@ -245,7 +305,79 @@ int main( )
 		
 		//chair.Draw(shader);
 		//lampara.Draw(shader);
-		
+		//DIBUJANDO EL ROBOT
+        //USING OTHER SHADER
+        material_shader.Use();
+        glUniform3f(glGetUniformLocation(material_shader.Program, "light.ambient"), 1.0f, 1.0f, 1.0f);
+        glUniform3f(glGetUniformLocation(material_shader.Program, "light.diffuse"), 1.0f, 1.0f, 1.0f);
+        glUniform3f(glGetUniformLocation(material_shader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
+
+        glUniform3f(glGetUniformLocation(material_shader.Program, "light.direction"), -1.0f, 0.0f, 0.0f);
+        glUniform3f(glGetUniformLocation(material_shader.Program, "viewPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
+
+        glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+
+        model = glm::mat4(1);
+
+        model = glm::translate(model, glm::vec3(3.29f, 2.30f, 0.118f));
+        if (body_animation.play) {
+            body_animation.animacion(&model);
+        }
+        glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        cuerpo.Draw(material_shader);
+
+        glm::mat4 modelAux = model;
+
+        model = modelAux;
+        model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0f));
+        if (head_animation.play) {
+            head_animation.animacion(&model);
+        }
+        glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        cabeza.Draw(material_shader);
+
+        //Brazo derecho
+        model = modelAux;
+        model = glm::translate(model, glm::vec3(0.0f, 1.34f, 0.93f));
+        if (right_arm_animation.play) {
+            right_arm_animation.animacion(&model);
+        }
+        glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        brazo.Draw(material_shader);
+
+        //Brazo izquierdo
+        model = modelAux;
+        model = glm::translate(model, glm::vec3(0.0f, 1.34f, -0.93f));
+        model = glm::scale(model, glm::vec3(-1.0f, -1.0f, -1.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        if (left_arm_animation.play) {
+            left_arm_animation.animacion(&model);
+        }
+        glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        brazo.Draw(material_shader);
+
+        //Piernas
+        //Izquieda
+        model = modelAux;
+        model = glm::translate(model, glm::vec3(0.0f, -0.21f, -0.45f));
+        if (left_leg_animation.play) {
+            left_leg_animation.animacion(&model);
+        }
+        glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        pierna.Draw(material_shader);
+
+        //Derecha
+        model = modelAux;
+        model = glm::translate(model, glm::vec3(0.0f, -0.21f, 0.45f));
+        model = glm::scale(model, glm::vec3(-1.0f, -1.0f, -1.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        if (right_leg_animation.play) {
+            right_leg_animation.animacion(&model);
+        }
+        glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        pierna.Draw(material_shader);
+
         glBindVertexArray(0);
         //SKYBOX
         SkyBoxshader.Use();
@@ -348,6 +480,24 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
             silla_animacion.reset();
             silla_animacion.interpolation();
         }
+    }
+    if (keys[GLFW_KEY_5]) {
+        head_animation.play = !head_animation.play;
+        body_animation.play = !body_animation.play;
+        right_arm_animation.play = !right_arm_animation.play;
+        left_arm_animation.play = !left_arm_animation.play;
+        right_leg_animation.play = !right_leg_animation.play;
+        left_leg_animation.play = !left_leg_animation.play;
+
+        if (body_animation.play) {
+            head_animation.start();
+            body_animation.start();
+            right_arm_animation.start();
+            left_arm_animation.start();
+            right_leg_animation.start();
+            left_leg_animation.start();
+        }
+        
     }
     if (GLFW_KEY_Q == key)
     {

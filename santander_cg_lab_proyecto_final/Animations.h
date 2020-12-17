@@ -105,7 +105,7 @@ typedef struct _frame
 
 class KeyFrameAnimation {
 private:
-    int i_max_steps = 190;
+    int i_max_steps;
     int i_curr_steps = 0;
     //int num_freames;
     int playIndex = 0;
@@ -114,8 +114,9 @@ public:
     vector<FRAME> KeyFrame = vector<FRAME>();
     GLint FrameIndex = 0;
     bool play = false;
-    KeyFrameAnimation() {
+    KeyFrameAnimation(int _i_max_steps = 190) {
         //Initializing the animation
+        i_max_steps = _i_max_steps;
         for (int i = 0; i < KeyFrame.size(); i++)
         {
             KeyFrame[i].posX = 0;
@@ -128,6 +129,13 @@ public:
             KeyFrame[i].rotYInc = 0;
             KeyFrame[i].rotZ = 0;
             KeyFrame[i].rotZInc = 0;
+        }
+    }
+    void start() {
+        if (play) {
+            reset();
+            interpolation();
+            puts("Comienza a correr la animacion");
         }
     }
     void loadAnimation(char* path) {

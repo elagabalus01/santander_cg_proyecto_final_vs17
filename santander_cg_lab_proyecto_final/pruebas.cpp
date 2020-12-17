@@ -107,7 +107,8 @@ int main( )
 	//Cargando modelos
 	
 	//Modelo_Material cubo = (char*) "Models/proyecto/cubo.obj";
-    Modelo_Material mono = (char*) "Models/proyecto/robot/robot.obj";
+    //Modelo_Material mono = (char*) "Models/proyecto/robot/robot.obj";
+    Modelo_Material mono = (char*) "Models/proyecto/robot/head.obj";
     //Modelo_Material mono = (char*) "Models/mono.obj";
 
     GLuint VBO, containerVAO;
@@ -158,7 +159,7 @@ int main( )
         
 
         //glUniform3f(glGetUniformLocation(shader.Program, "light.direction"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
-        glUniform3f(glGetUniformLocation(shader.Program, "light.direction"), 5.0f,-10.0f,0.0f);
+        glUniform3f(glGetUniformLocation(shader.Program, "light.direction"), 1.0f,-1.0f,0.0f);
         glUniform3f(glGetUniformLocation(shader.Program, "viewPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
 
         glm::mat4 view = camera.GetViewMatrix();

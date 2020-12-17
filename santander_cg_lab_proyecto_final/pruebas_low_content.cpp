@@ -51,9 +51,7 @@ AnimationCircuit nave_animation = AnimationCircuit();
 int main( )
 {
     //printf("Valor de estado antes de emoezar el gameloop %i",nave_animation.state);
-    nave_animation.getState();
     setAnimation();
-    nave_animation.getState();
     // Init GLFW
     glfwInit();
     // Set all the required options for GLFW
