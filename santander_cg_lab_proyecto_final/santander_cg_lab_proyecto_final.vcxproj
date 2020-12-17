@@ -151,8 +151,7 @@
     <None Include="glew32.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="animation_recorder.cpp" />
-    <ClCompile Include="Modelo_Material.cpp" />
+    <ClCompile Include="SantanderMartínezÁngelAntonio_Proyecto_Final_GPO09.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

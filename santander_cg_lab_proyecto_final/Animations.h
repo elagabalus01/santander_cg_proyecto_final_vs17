@@ -20,7 +20,7 @@ vector<string> splitString(string cadena, char delimiter) {
 
 class AnimationCircuit {
 private:
-    GLfloat traslacion_x = 0.0f, traslacion_z = 0.0f, rotation = 0.0f, velocidad = 0.02f;
+    GLfloat traslacion_x = 0.0f, traslacion_z = 0.0f, rotation = 0.0f, velocidad = 0.1f;
     GLint state = 1;
     
 public:

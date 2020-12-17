@@ -9,6 +9,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -91,11 +92,13 @@ public:
 
 		// Also set each mesh's shininess property to a default value (if you want you could extend this to another mesh property and possibly change this value)
 		//glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);
+        /*
         cout << material.diffuse.r << "\t";
         cout << material.diffuse.g << "\t";
         cout << material.diffuse.b << endl;
-
         cout << material.shininess << endl;
+        */
+
         glUniform3f(glGetUniformLocation(shader.Program, "material.ambient"), material.ambient.r, material.ambient.g, material.ambient.b);
         glUniform3f(glGetUniformLocation(shader.Program, "material.diffuse"), material.diffuse.r, material.diffuse.g, material.diffuse.b);
         glUniform3f(glGetUniformLocation(shader.Program, "material.specular"), material.specular.r, material.specular.g, material.specular.b);
@@ -105,7 +108,6 @@ public:
 		glBindVertexArray(this->VAO);
 		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
-        std::cout << "Si se pudo" << std::endl;
 	}
 
 private:

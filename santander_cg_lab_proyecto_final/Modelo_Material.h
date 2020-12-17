@@ -3,6 +3,9 @@
 #include <vector>
 #include <GL/glew.h>
 #include <string>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -24,7 +27,6 @@ public:
     {
         for (GLuint i = 0; i < this->meshes.size(); i++)
         {
-            cout << "Mallá " << i << endl;
             this->meshes[i].Draw(shader);
         }
     }
@@ -35,6 +37,7 @@ private:
 	{
 		// Read file via ASSIMP
 		Assimp::Importer importer;
+        importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 		const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 		// Check for errors
@@ -47,11 +50,45 @@ private:
 			cout << "El modelo se cargó exitosamente" << endl;
 			cout << "El modelo tiene texturas?"<< scene->HasTextures() << endl;
 			cout << "El modelo tiene materiales?" << scene->HasMaterials() <<endl;
+            cout << "El modelo tiene animacions?" << scene->HasAnimations() << endl;
+            cout << "Numero de mallas" << scene->mNumMeshes << endl;
+            cout << "Numero huesos " << scene->mMeshes[0]->mNumBones << endl;
 
 		}
 		// Retrieve the directory path of the filepath
 		//this->directory = path.substr(0, path.find_last_of('/'));
-
+        //Testing aianimations
+        if (scene->HasAnimations()) {
+            aiAnimation *animacion;
+            aiMeshAnim *malla_animada;
+            aiNodeAnim *nodo_animado;
+            aiVector3D posicion;
+            aiQuaternion rotation;
+            for (GLuint i = 0; i < scene->mNumAnimations; i++)
+            {
+                animacion = scene->mAnimations[i];
+                cout << "Nombre de la animacion " << animacion->mName.C_Str() << endl;
+                for (GLuint i = 0; i < animacion->mNumMeshChannels; i++) {
+                    malla_animada = animacion->mMeshChannels[i];
+                    cout << "Nombre de la malla animada " << malla_animada->mName.C_Str() << endl;
+                }
+                printf("Numero de nodos de animacion %i", animacion->mNumChannels);
+                for (GLuint i = 0; i < animacion->mNumChannels; i++) {
+                    nodo_animado = animacion->mChannels[i];
+                    cout << "Nombre del nodo animado " << nodo_animado->mNodeName.C_Str() << endl;
+                    for (GLuint i = 0; i < nodo_animado->mNumPositionKeys; i++) {
+                        posicion = nodo_animado->mPositionKeys[i].mValue;
+                        printf("Pos vec3(%.2f,%.2f,%.2f)\n", posicion.x, posicion.y, posicion.z);
+                    }
+                    for (GLuint i = 0; i < nodo_animado->mNumRotationKeys; i++) {
+                        rotation = nodo_animado->mRotationKeys[i].mValue;
+                        printf("Rot vec3(%.2f,%.2f,%.2f)\n", rotation.x, rotation.y, rotation.z);
+                    }
+                }
+            }
+        }
+        
+        //TESTING AIANIMATIONS
 		// Process ASSIMP's root node recursively
 		this->processNode(scene->mRootNode, scene);
 	}
@@ -65,7 +102,16 @@ private:
 			// The node object only contains indices to index the actual objects in the scene.
 			// The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-
+            //aiBone hueso=mesh->mBones[1][0];
+            printf("Numero de mallas en este nodo %i\n",node->mNumMeshes);
+            printf("Numero de huesos en esta malla %i\n", mesh->mNumBones);
+            if (mesh->mNumBones > 0) {
+                cout << "Nombre del hueso " << mesh->mBones[0][mesh->mNumBones - 1].mName.C_Str() << endl;
+                //Conviertindo las matriz
+                //aiMatrix4x4::Rotation(glm::radians(90.0f),aiVector3D(0.0f,0.0f,1.0f), mesh->mBones[5][0].mOffsetMatrix);
+                aiMatrix4x4::Translation(aiVector3D(10.0f, 0.0f, 0.0f), mesh->mBones[0][mesh->mNumBones - 1].mOffsetMatrix);
+            }
+            
 			this->meshes.push_back(this->processMesh(mesh, scene));
 		}
 

@@ -51,10 +51,7 @@
     <None Include="assimp-vc140-mt.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Modelo_Material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="animation_recorder.cpp">
+    <ClCompile Include="SantanderMartínezÁngelAntonio_Proyecto_Final_GPO09.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

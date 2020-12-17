@@ -106,8 +106,9 @@ int main( )
     
 	//Cargando modelos
 	
-	Modelo_Material cubo = (char*) "Models/proyecto/cubo.obj";
-    Modelo_Material mono = (char*) "Models/mono.obj";
+	//Modelo_Material cubo = (char*) "Models/proyecto/cubo.obj";
+    Modelo_Material mono = (char*) "Models/proyecto/robot/robot.obj";
+    //Modelo_Material mono = (char*) "Models/mono.obj";
 
     GLuint VBO, containerVAO;
     glGenVertexArrays(1, &containerVAO);
@@ -154,7 +155,7 @@ int main( )
         glUniform3f(glGetUniformLocation(shader.Program, "light.diffuse"), 1.0f, 1.0f, 1.0f);
         glUniform3f(glGetUniformLocation(shader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 
-        glm::mat4 model(1);
+        
 
         //glUniform3f(glGetUniformLocation(shader.Program, "light.direction"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
         glUniform3f(glGetUniformLocation(shader.Program, "light.direction"), 5.0f,-10.0f,0.0f);
@@ -163,6 +164,7 @@ int main( )
         glm::mat4 view = camera.GetViewMatrix();
         glUniformMatrix4fv( glGetUniformLocation( shader.Program, "projection" ), 1, GL_FALSE, glm::value_ptr( projection ) );
         glUniformMatrix4fv( glGetUniformLocation( shader.Program, "view" ), 1, GL_FALSE, glm::value_ptr( view ) );
+        glm::mat4 model(1);
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         
         // Draw the loaded model
