@@ -179,15 +179,17 @@ int main( )
     Model puerta = (char*) "Models/proyecto/puerta/puerta.obj";
     Model teclado = (char*) "Models/proyecto/compu/teclado.obj";
     Model nave = (char*) "Models/proyecto/nave/nave.obj";
+    Model piso = (char*) "Models/proyecto/casa/piso.obj";
 
     //MODELO DEL ROBOT
     Modelo_Material cuerpo = (char*) "Models/proyecto/robot/body.obj";
     Modelo_Material cabeza = (char*) "Models/proyecto/robot/head.obj";
     Modelo_Material brazo = (char*) "Models/proyecto/robot/right_arm.obj";
     Modelo_Material pierna = (char*) "Models/proyecto/robot/leg.obj";
+
     //SKYBOx
-    SkyBox fondo((char*)"SkyBox/right.tga", (char*)"SkyBox/left.tga",(char*)"SkyBox/top.tga",
-        (char*)"SkyBox/bottom.tga", (char*)"SkyBox/back.tga", (char*)"SkyBox/front.tga",
+    SkyBox fondo((char*)"SkyBox/right.jpg", (char*)"SkyBox/left.jpg",(char*)"SkyBox/top.jpg",
+        (char*)"SkyBox/bottom.jpg", (char*)"SkyBox/back.jpg", (char*)"SkyBox/front.jpg",
         skyboxVertices_1,sizeof(skyboxVertices_1));
 
     Poster atomo = Poster((char*)"Models/proyecto/poster/atomo.png", vertices, indices, sizeof(vertices), sizeof(indices));
@@ -234,6 +236,7 @@ int main( )
         glm::mat4 model(1);
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         casa.Draw(shader);
+        //piso.Draw(shader);
 
 		
 		//if (camera.position.x < -7.0f) {
@@ -247,7 +250,7 @@ int main( )
 			lampara.Draw(shader);
 
             model = glm::mat4(1);
-            model = glm::translate(model, glm::vec3(4.9f, 2.8f, 2.0f));
+            model = glm::translate(model, glm::vec3(4.37f, 2.81f, 2.34f));
             model = glm::rotate(model, glm::radians(20.0f),glm::vec3(0.0f, 1.0f, 0.0f));
             glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
             compu.Draw(shader);
