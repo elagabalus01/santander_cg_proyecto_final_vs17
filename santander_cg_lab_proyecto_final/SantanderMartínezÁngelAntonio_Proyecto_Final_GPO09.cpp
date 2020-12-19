@@ -147,10 +147,9 @@ int main( )
     
 
     // Setup and compile our shaders
-    //Shader shader("Shaders/modelLoading.vs", "Shaders/modelLoading.frag");
-    Shader shader( "Shaders/pruebas/cel_dirlight.vs", "Shaders/pruebas/cel_dirlight.frag" );
+    Shader shader( "Shaders/cel_dirlight.vs", "Shaders/cel_dirlight.frag" );
     Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
-    Shader material_shader("Shaders/pruebas/cel_material_dirlight.vs", "Shaders/pruebas/cel_material_dirlight.frag");
+    Shader material_shader("Shaders/cel_material_dirlight.vs", "Shaders/cel_material_dirlight.frag");
 	
     //Cargando modelos
 	Model casa = (char*) "Models/proyecto/casa/casa.obj";
@@ -282,7 +281,7 @@ int main( )
         glUniform3f(glGetUniformLocation(material_shader.Program, "light.diffuse"), 1.0f, 1.0f, 1.0f);
         glUniform3f(glGetUniformLocation(material_shader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 
-        glUniform3f(glGetUniformLocation(material_shader.Program, "light.direction"), -1.0f, 0.0f, 0.0f);
+        glUniform3f(glGetUniformLocation(material_shader.Program, "light.direction"), -1.0f, -1.0f, 0.0f);
         glUniform3f(glGetUniformLocation(material_shader.Program, "viewPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
 
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
