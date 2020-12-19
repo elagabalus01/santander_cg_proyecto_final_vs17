@@ -45,6 +45,7 @@ public:
 		this->vertices_size = vertices_size;
 		this->indinces_size = indices_size;
 		this->path = path;
+        this->makePoster();
 	}
 	void makePoster() {
 

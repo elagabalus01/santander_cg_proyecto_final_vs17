@@ -46,6 +46,7 @@ private:
 			cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
 			return;
 		}
+        /*
 		else {
 			cout << "El modelo se cargó exitosamente" << endl;
 			cout << "El modelo tiene texturas?"<< scene->HasTextures() << endl;
@@ -55,6 +56,7 @@ private:
             cout << "Numero huesos " << scene->mMeshes[0]->mNumBones << endl;
 
 		}
+        */
 		// Retrieve the directory path of the filepath
 		//this->directory = path.substr(0, path.find_last_of('/'));
         //Testing aianimations

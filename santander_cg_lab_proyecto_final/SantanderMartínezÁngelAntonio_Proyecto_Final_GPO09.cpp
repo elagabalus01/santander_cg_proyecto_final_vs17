@@ -25,7 +25,7 @@
 #include "Animations.h"
 
 // Properties
-const GLuint WIDTH = 800, HEIGHT = 600;
+const GLuint WIDTH = 850, HEIGHT = 480;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 // Function prototypes
@@ -49,52 +49,38 @@ AnimationCircuit nave_animation = AnimationCircuit();
 KeyFrameAnimation puerta_animacion = KeyFrameAnimation(250);
 KeyFrameAnimation silla_animacion = KeyFrameAnimation(60);
 KeyFrameAnimation nave_animacion = KeyFrameAnimation(30);
+
 //Head Animation
 //Animation object
 KeyFrameAnimation head_animation = KeyFrameAnimation(num_steps_robot_animation);
 //Animation path
 char* head_animation_file = (char*) "animaciones/robot/cabeza.animacion";
-//Head position
-float head_rot_y = 0.0f;
 
 //body Animation
 //Animation object
 KeyFrameAnimation body_animation = KeyFrameAnimation(num_steps_robot_animation);
 //Animation path
 char* body_animation_file = (char*) "animaciones/robot/cuerpo.animacion";
-//Body position
-float body_rot_y = 0.0f;
-float body_pos_x = 0.0f;
-float body_pos_z = 0.0f;
 
 //Right arm animation
 KeyFrameAnimation right_arm_animation = KeyFrameAnimation(num_steps_robot_animation);
 //Animation path
 char* right_arm_animation_file = (char*) "animaciones/robot/brazo_derecho.animacion";
-//Arm position
-float righ_arm_rot_z = 0.0f;
 
 //Left arm animation
 KeyFrameAnimation left_arm_animation = KeyFrameAnimation(num_steps_robot_animation);
 //Animation path
 char* left_arm_animation_file = (char*) "animaciones/robot/brazo_izquiedo.animacion";
-//Arm position
-float left_arm_rot_z = 0.0f;
-
 
 //Right leg animation
 KeyFrameAnimation right_leg_animation = KeyFrameAnimation(num_steps_robot_animation);
 //Animation path
 char* right_leg_animation_file = (char*) "animaciones/robot/pierna_derecha.animacion";
-//leg position
-float righ_leg_rot_z = 0.0f;
 
 //Left leg animation
 KeyFrameAnimation left_leg_animation = KeyFrameAnimation(num_steps_robot_animation);
 //Animation path
 char* left_leg_animation_file = (char*) "animaciones/robot/pierna_izquieda.animacion";
-//Leg position
-float left_leg_rot_z = 0.0f;
 
 int main( )
 {
@@ -165,8 +151,8 @@ int main( )
     Shader shader( "Shaders/pruebas/cel_dirlight.vs", "Shaders/pruebas/cel_dirlight.frag" );
     Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
     Shader material_shader("Shaders/pruebas/cel_material_dirlight.vs", "Shaders/pruebas/cel_material_dirlight.frag");
-	//Cargando modelos
-
+	
+    //Cargando modelos
 	Model casa = (char*) "Models/proyecto/casa/casa.obj";
 	Model lampara = (char*) "Models/proyecto/lampara/lampara.obj";
 	Model compu = (char*) "Models/proyecto/compu/pantalla.obj";
@@ -174,8 +160,6 @@ int main( )
     Model silla = (char*) "Models/proyecto/silla/silla.obj";
 	Model cama = (char*) "Models/proyecto/cama/cama.obj";
     Model room = (char*) "Models/proyecto/room/room.obj";
-
-//    Model room = (char*) "Models/proyecto/room_test/room.obj";
     Model puerta = (char*) "Models/proyecto/puerta/puerta.obj";
     Model teclado = (char*) "Models/proyecto/compu/teclado.obj";
     Model nave = (char*) "Models/proyecto/nave/nave.obj";
@@ -193,10 +177,8 @@ int main( )
         skyboxVertices_1,sizeof(skyboxVertices_1));
 
     Poster atomo = Poster((char*)"Models/proyecto/poster/atomo.png", vertices, indices, sizeof(vertices), sizeof(indices));
-    atomo.makePoster();
 
     Poster einstein = Poster((char*)"Models/proyecto/poster/einstein.png", vertices2, indices2, sizeof(vertices2), sizeof(indices2));
-    einstein.makePoster();
 
     // Draw in wireframe
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -204,8 +186,7 @@ int main( )
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
     
     // Game loop
-    while( !glfwWindowShouldClose( window ) )
-    {
+    while( !glfwWindowShouldClose( window ) ){
         // Set frame time
         GLfloat currentFrame = (GLfloat)glfwGetTime( );
         deltaTime = currentFrame - lastFrame;
@@ -234,51 +215,45 @@ int main( )
         
         // Draw the loaded model
         glm::mat4 model(1);
+        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         casa.Draw(shader);
-        //piso.Draw(shader);
+        piso.Draw(shader);
 
-		
-		//if (camera.position.x < -7.0f) {
-		
-		//}
-		//else {
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(4.9f, 2.8f, 5.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		lampara.Draw(shader);
+
+        model = glm::mat4(1);
+        model = glm::translate(model, glm::vec3(4.37f, 2.81f, 2.34f));
+        model = glm::rotate(model, glm::radians(20.0f),glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        compu.Draw(shader);
+
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(4.51f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		escritorio.Draw(shader);
+
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(2.5f, 0.0f, 4.0f)); // silla
+        silla_animacion.animacion(&model); //Asociar animacion
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		silla.Draw(shader);
+
+		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -6.30f));
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		cama.Draw(shader);
+
+		model = glm::mat4(1);
+		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		room.Draw(shader);
+
+		atomo.drawPoster();
+        einstein.drawPoster();
         
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(4.9f, 2.8f, 5.0f));
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			lampara.Draw(shader);
-
-            model = glm::mat4(1);
-            model = glm::translate(model, glm::vec3(4.37f, 2.81f, 2.34f));
-            model = glm::rotate(model, glm::radians(20.0f),glm::vec3(0.0f, 1.0f, 0.0f));
-            glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-            compu.Draw(shader);
-
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(4.51f, 0.0f, 4.0f)); // Translate it down a bit so it's at the center of the scene
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			escritorio.Draw(shader);
-
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(2.5f, 0.0f, 4.0f)); // silla
-            silla_animacion.animacion(&model); //Asociar animacion
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			silla.Draw(shader);
-
-			model = glm::mat4(1);
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -6.30f));
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			cama.Draw(shader);
-
-			model = glm::mat4(1);
-			glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			room.Draw(shader);
-
-			atomo.drawPoster();
-            einstein.drawPoster();
-        
-		//}
         model = glm::mat4(1);
         model = glm::translate(model, glm::vec3(-5.70f, 0.0f, -1.4f));
         puerta_animacion.animacion(&model); //Asociar animacion
@@ -299,15 +274,7 @@ int main( )
 
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         nave.Draw(shader);
-		////ourModel.Draw( shader );
-		////Drawing models
-		////ourModel2.Draw(shader);
-		//
-		//ourModel3.Draw(shader);
-		//modelos[selection].Draw(shader);
-		
-		//chair.Draw(shader);
-		//lampara.Draw(shader);
+
 		//DIBUJANDO EL ROBOT
         //USING OTHER SHADER
         material_shader.Use();
@@ -322,11 +289,8 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
         model = glm::mat4(1);
-
         model = glm::translate(model, glm::vec3(3.29f, 2.30f, 0.118f));
-        if (body_animation.play) {
-            body_animation.animacion(&model);
-        }
+        body_animation.animacion(&model);
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         cuerpo.Draw(material_shader);
 
@@ -334,18 +298,14 @@ int main( )
 
         model = modelAux;
         model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0f));
-        if (head_animation.play) {
-            head_animation.animacion(&model);
-        }
+        head_animation.animacion(&model);
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         cabeza.Draw(material_shader);
 
         //Brazo derecho
         model = modelAux;
         model = glm::translate(model, glm::vec3(0.0f, 1.34f, 0.93f));
-        if (right_arm_animation.play) {
-            right_arm_animation.animacion(&model);
-        }
+        right_arm_animation.animacion(&model);
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         brazo.Draw(material_shader);
 
@@ -354,9 +314,7 @@ int main( )
         model = glm::translate(model, glm::vec3(0.0f, 1.34f, -0.93f));
         model = glm::scale(model, glm::vec3(-1.0f, -1.0f, -1.0f));
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        if (left_arm_animation.play) {
-            left_arm_animation.animacion(&model);
-        }
+        left_arm_animation.animacion(&model);
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         brazo.Draw(material_shader);
 
@@ -364,9 +322,7 @@ int main( )
         //Izquieda
         model = modelAux;
         model = glm::translate(model, glm::vec3(0.0f, -0.21f, -0.45f));
-        if (left_leg_animation.play) {
-            left_leg_animation.animacion(&model);
-        }
+        left_leg_animation.animacion(&model);
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         pierna.Draw(material_shader);
 
@@ -375,9 +331,7 @@ int main( )
         model = glm::translate(model, glm::vec3(0.0f, -0.21f, 0.45f));
         model = glm::scale(model, glm::vec3(-1.0f, -1.0f, -1.0f));
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        if (right_leg_animation.play) {
-            right_leg_animation.animacion(&model);
-        }
+        right_leg_animation.animacion(&model);
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         pierna.Draw(material_shader);
 
@@ -455,11 +409,7 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
     {
         active_nave_animation = !active_nave_animation;
         if (!active_nave_animation) {
-            puts("Desactivada");
             nave_animation.reset();
-        }
-        else {
-            puts("Animación activada");
         }
     }
     if (keys[GLFW_KEY_2])

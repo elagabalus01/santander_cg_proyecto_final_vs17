@@ -10,7 +10,6 @@ vector<string> splitString(string cadena, char delimiter) {
     stringstream stream_cadena(cadena);
     string aux;
 
-    // Tokenizing w.r.t. space ' ' 
     while (getline(stream_cadena, aux, delimiter))
     {
         tokens.push_back(aux);
@@ -25,7 +24,6 @@ private:
     
 public:
     AnimationCircuit() {
-
         reset();
     }
     void reset() {
@@ -68,10 +66,9 @@ public:
             break;
         default:
             puts("Nunca debe ejecutarse esta funcion");
-            //state = 1;
             break;
         }
-        printf("Estado %i vec3(%.2f,0,%.2f) rot(%.2f)\n",state,traslacion_x,traslacion_z,rotation);
+        //printf("Estado %i vec3(%.2f,0,%.2f) rot(%.2f)\n",state,traslacion_x,traslacion_z,rotation);
         *model = glm::translate(*model, glm::vec3(this->traslacion_x, 0, this->traslacion_z));
         *model = glm::rotate(*model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
     }
@@ -107,7 +104,6 @@ class KeyFrameAnimation {
 private:
     int i_max_steps;
     int i_curr_steps = 0;
-    //int num_freames;
     int playIndex = 0;
 public:
     float posX, posY, posZ, incX, incY, incZ, rotX, rotXInc, rotY, rotYInc, rotZ, rotZInc;
@@ -149,10 +145,10 @@ public:
                     stof(row[0]), stof(row[1]), stof(row[2]), stof(row[3]), stof(row[4]), stof(row[5])
                 )
             );
-            printf("Frame tras(%.2f,%.2f,%.2f) rot(%.2f)\n", stof(row[0]), stof(row[1]), stof(row[2]), stof(row[3]));
+            //printf("Frame tras(%.2f,%.2f,%.2f) rot(%.2f)\n", stof(row[0]), stof(row[1]), stof(row[2]), stof(row[3]));
         }
         file.close();
-        cout << "Numero de frames " << KeyFrame.size() << endl;
+        //cout << "Numero de frames " << KeyFrame.size() << endl;
     }
     void saveFrame(char *path,float pos_x,float pos_y,float pos_z,float rot_x, float rot_y, float rot_z)
     {
@@ -192,12 +188,12 @@ public:
     void animacion(glm::mat4 *model){
         //Movimiento del personaje
         if (play) {
-            cout <<"Index: "<< playIndex << "Frame: " << i_curr_steps << endl;
+            //cout <<"Index: "<< playIndex << "Frame: " << i_curr_steps << endl;
             if (i_curr_steps >= i_max_steps){
                 playIndex++;
                 if (playIndex > KeyFrame.size()-2)	//end of total animation?
                 {
-                    printf("termina anim\n");
+                    //printf("termina anim\n");
                     playIndex = 0;
                     play = false;
                 }
