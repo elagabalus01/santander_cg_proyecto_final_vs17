@@ -138,6 +138,7 @@
     <ClInclude Include="Animations.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh_fbx.h" />
     <ClInclude Include="Mesh_Material.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="modelos.h" />

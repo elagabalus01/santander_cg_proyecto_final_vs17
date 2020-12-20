@@ -108,10 +108,10 @@ private:
             printf("Numero de mallas en este nodo %i\n",node->mNumMeshes);
             printf("Numero de huesos en esta malla %i\n", mesh->mNumBones);
             if (mesh->mNumBones > 0) {
-                cout << "Nombre del hueso " << mesh->mBones[0][mesh->mNumBones - 1].mName.C_Str() << endl;
-                //Conviertindo las matriz
-                //aiMatrix4x4::Rotation(glm::radians(90.0f),aiVector3D(0.0f,0.0f,1.0f), mesh->mBones[5][0].mOffsetMatrix);
-                aiMatrix4x4::Translation(aiVector3D(10.0f, 0.0f, 0.0f), mesh->mBones[0][mesh->mNumBones - 1].mOffsetMatrix);
+                for (unsigned int i = 0; i < mesh->mNumBones; i++) {
+                    cout << "Nombre del hueso " << mesh->mBones[i]->mName.data<< endl;
+                }
+                
             }
             
 			this->meshes.push_back(this->processMesh(mesh, scene));
