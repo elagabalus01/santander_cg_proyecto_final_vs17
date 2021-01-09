@@ -60,11 +60,15 @@ void main()
     else if (intensity > 0.5) {
         intensity = 0.7;
     }
+	/*else if (intensity > 0.3) {
+        intensity = 0.5;
+    }*/
+    /*else if (intensity > 0.2) {
+        intensity = 0.3;
+    }*/
 	else {
         intensity = 0.5;
     }
     vec3 result = ambient + diffuse + specular;
-	//vec3 result = diffuse + specular;
-	//vec3 result = ambient + diffuse;
     color = vec4(result, 1.0f)*intensity;
 }

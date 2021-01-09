@@ -20,7 +20,7 @@
 
 // Other Libs
 #include <SOIL2/SOIL2.h>
-#include "modelos.h"
+#include "Poster.h"
 #include "SkyBox.h"
 #include "Animations.h"
 
@@ -34,7 +34,7 @@ void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
 
 // Camera
-Camera camera( glm::vec3( -25.0f, 5.0f, 0.0f ), glm::vec3(0.0f,1.0f,0.0f));
+Camera camera( glm::vec3( -50.0f, 5.0f, 0.0f ));
 bool keys[1024];
 double lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -290,7 +290,7 @@ int main( )
         glUniform3f(glGetUniformLocation(material_shader.Program, "light.diffuse"), 1.0f, 1.0f, 1.0f);
         glUniform3f(glGetUniformLocation(material_shader.Program, "light.specular"), 1.0f, 1.0f, 1.0f);
 
-        glUniform3f(glGetUniformLocation(material_shader.Program, "light.direction"), -1.0f, -1.0f, 0.0f);
+        glUniform3f(glGetUniformLocation(material_shader.Program, "light.direction"), 1.0f, -1.0f, 0.0f);
         glUniform3f(glGetUniformLocation(material_shader.Program, "viewPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
 
         glUniformMatrix4fv(glGetUniformLocation(material_shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));

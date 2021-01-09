@@ -140,7 +140,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Mesh_Material.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="modelos.h" />
+    <ClInclude Include="Poster.h" />
     <ClInclude Include="Modelo_Material.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SkyBox.h" />
