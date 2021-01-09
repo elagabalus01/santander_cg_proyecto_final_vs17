@@ -17,62 +17,159 @@ vector<string> splitString(string cadena, char delimiter) {
     return tokens;
 }
 
-class AnimationCircuit {
-private:
+class Animacion {
+public:
     GLfloat traslacion_x = 0.0f, traslacion_z = 0.0f, rotation = 0.0f, velocidad = 0.1f;
     GLint state = 1;
+    GLboolean play = false;
+
+    Animacion() {
+        reset();
+    }
     
+    void toggle() {
+        play = !play;
+    }
+    void reset() {
+        traslacion_x = 0.0f, traslacion_z = 0.0f, rotation = 0.0f, state = 1;
+    }
+    void getState() {
+        printf("Estado %i\n", state);
+    }
+    virtual void run(glm::mat4 *model) {};
+
+};
+
+class AnimationCircuit: public Animacion {
 public:
     AnimationCircuit() {
         reset();
     }
-    void reset() {
-        traslacion_x = 0.0f, traslacion_z = 0.0f, rotation = 0.0f, state=1;
-    }
-    void getState() {
-        printf("Estado %i\n",state);
-    }
-    void animacionCircuito(glm::mat4 *model) {
-        puts("Ejecutando la animacion");
-        switch (state)
-        {
-        case 1:
-            rotation = 0;
-            if (traslacion_x > -5.0f)
-                traslacion_x -= velocidad;
-            else
-                state = 2;
-            break;
-        case 2:
-            rotation = 90;
-            if (traslacion_z < 5.0f)
-                traslacion_z += velocidad;
-            else
-                state = 3;
-            break;
-        case 3:
-            rotation = 180;
-            if (traslacion_x < 5.0f)
-                traslacion_x += velocidad;
-            else
-                state = 4;
-            break;
-        case 4:
-            rotation = 270;
-            if (traslacion_z > -5.0f)
-                traslacion_z -= velocidad;
-            else
-                state = 1;
-            break;
-        default:
-            puts("Nunca debe ejecutarse esta funcion");
-            break;
+    void run(glm::mat4 *model) {
+        if (play) {
+            switch (state){
+                case 1:
+                    rotation = 0;
+                    if (traslacion_x > -5.0f)
+                        traslacion_x -= velocidad;
+                    else
+                        state = 2;
+                    break;
+                case 2:
+                    rotation = 90;
+                    if (traslacion_z < 5.0f)
+                        traslacion_z += velocidad;
+                    else
+                        state = 3;
+                    break;
+                case 3:
+                    rotation = 180;
+                    if (traslacion_x < 5.0f)
+                        traslacion_x += velocidad;
+                    else
+                        state = 4;
+                    break;
+                case 4:
+                    rotation = 270;
+                    if (traslacion_z > -5.0f)
+                        traslacion_z -= velocidad;
+                    else
+                        state = 1;
+                    break;
+                default:
+                    puts("Nunca debe ejecutarse esta funcion");
+                    break;
+            }
+            //printf("Nave\nEstado %i vec3(%.2f,0,%.2f) rot(%.2f)\n", state, traslacion_x, traslacion_z, rotation);
         }
-        //printf("Estado %i vec3(%.2f,0,%.2f) rot(%.2f)\n",state,traslacion_x,traslacion_z,rotation);
+        
         *model = glm::translate(*model, glm::vec3(this->traslacion_x, 0, this->traslacion_z));
         *model = glm::rotate(*model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
     }
 };
+
+//ANIMACION DE LA SILLA
+class AnimationSilla: public Animacion{
+public:
+    AnimationSilla() {
+        reset();
+    }
+    void run(glm::mat4 *model) {
+        if (play) {
+            switch (state){
+                case 1:
+                    if (rotation <= 55.0f)
+                        rotation += 10 * velocidad;
+                    else
+                        state = 2;
+                    break;
+                case 2:
+                    if (traslacion_z <= 0.8f || rotation <= 60) {
+                        if (traslacion_z <= 0.8f)
+                            traslacion_z += velocidad;
+                        if (rotation <= 60)
+                            rotation += 10 * velocidad;
+                    }
+                    else
+                        state = 3;
+                    break;
+                case 3:
+                    if (traslacion_z > 0.0f || rotation > 0.0f) {
+                        if (traslacion_z > 0.0f)
+                            traslacion_z -= velocidad;
+                        if (rotation > 0.0f)
+                            rotation -= 10 * velocidad;
+                    }
+                    else{
+                        state = 1;
+                        reset();
+                        play = false;
+                    }
+                    break;
+                default:
+                    puts("Nunca debe ejecutarse esta funcion");
+                    break;
+            }
+        
+            //printf("Silla\nEstado %i vec3(%.2f,0,%.2f) rot(%.2f)\n", state, traslacion_x, traslacion_z, rotation);
+            *model = glm::translate(*model, glm::vec3(this->traslacion_x, 0, this->traslacion_z));
+            *model = glm::rotate(*model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+    }
+};
+//ANIMACION DE LA PUERTA
+class AnimationPuerta: public Animacion {
+public:
+    AnimationPuerta() {
+        reset();
+    }
+    void run(glm::mat4 *model) {
+        if (play) {
+            switch (state) {
+                case 1:
+                    if (rotation < 90)
+                        rotation += 10 * velocidad;
+                    else
+                        state = 2;
+                    break;
+                case 2:
+                    if (rotation > 0)
+                        rotation -= 10 * velocidad;
+                    else{
+                        state = 1;
+                        reset();
+                        play = false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            //printf("Puerta\nEstado %i vec3(%.2f,0,%.2f) rot(%.2f)\n", state, traslacion_x, traslacion_z, rotation);
+            *model = glm::rotate(*model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+    }
+};
+
 
 typedef struct _frame
 {

@@ -43,11 +43,17 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 int num_steps_robot_animation = 40;
 //Animation variables
-GLboolean active_nave_animation = false;
+//Nave
 AnimationCircuit nave_animation = AnimationCircuit();
 
-KeyFrameAnimation puerta_animacion = KeyFrameAnimation(250);
-KeyFrameAnimation silla_animacion = KeyFrameAnimation(60);
+//Door animation
+AnimationPuerta door_animation = AnimationPuerta();
+
+//Chair animation
+AnimationSilla chair_animation = AnimationSilla();
+
+//KeyFrameAnimation puerta_animacion = KeyFrameAnimation(250);
+//KeyFrameAnimation silla_animacion = KeyFrameAnimation(60);
 KeyFrameAnimation nave_animacion = KeyFrameAnimation(30);
 
 //Head Animation
@@ -86,9 +92,9 @@ int main( )
 {
     //Configurando las animaciones
     
-    puerta_animacion.loadAnimation((char*) "animaciones/puerta.animacion");
+    //puerta_animacion.loadAnimation((char*) "animaciones/puerta.animacion");
     
-    silla_animacion.loadAnimation((char*) "animaciones/silla.animacion");
+    //silla_animacion.loadAnimation((char*) "animaciones/silla.animacion");
     
     nave_animacion.loadAnimation((char*) "animaciones/nave.animacion");
 
@@ -110,7 +116,8 @@ int main( )
     
     // Create a GLFWwindow object that we can use for GLFW's functions
     GLFWwindow *window = glfwCreateWindow( WIDTH, HEIGHT, "Santander Martinez Angel Antonio - Proyecto final", nullptr, nullptr );
-    
+    // Disabling cursor
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if ( nullptr == window )
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -159,6 +166,7 @@ int main( )
     Model silla = (char*) "Models/proyecto/silla/silla.obj";
 	Model cama = (char*) "Models/proyecto/cama/cama.obj";
     Model room = (char*) "Models/proyecto/room/room.obj";
+    //Puerta
     Model puerta = (char*) "Models/proyecto/puerta/puerta.obj";
     Model teclado = (char*) "Models/proyecto/compu/teclado.obj";
     Model nave = (char*) "Models/proyecto/nave/nave.obj";
@@ -235,9 +243,11 @@ int main( )
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		escritorio.Draw(shader);
 
+        //SILLA
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(2.5f, 0.0f, 4.0f)); // silla
-        silla_animacion.animacion(&model); //Asociar animacion
+        //silla_animacion.animacion(&model); //Asociar animacion
+        chair_animation.run(&model);
 		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		silla.Draw(shader);
 
@@ -255,7 +265,8 @@ int main( )
         
         model = glm::mat4(1);
         model = glm::translate(model, glm::vec3(-5.70f, 0.0f, -1.4f));
-        puerta_animacion.animacion(&model); //Asociar animacion
+        //puerta_animacion.animacion(&model); //Asociar animacion
+        door_animation.run(&model);
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         puerta.Draw(shader);
 
@@ -266,9 +277,7 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::translate(model, glm::vec3(0.0f, 6.5f, 0.0f));
-        if (active_nave_animation) {
-            nave_animation.animacionCircuito(&model);
-        }
+        nave_animation.run(&model);
         nave_animacion.animacion(&model);
 
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -406,33 +415,29 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
 
     if (keys[GLFW_KEY_1])
     {
-        active_nave_animation = !active_nave_animation;
-        if (!active_nave_animation) {
-            nave_animation.reset();
-        }
+        nave_animation.toggle();
     }
     if (keys[GLFW_KEY_2])
     {
-        puerta_animacion.play = !puerta_animacion.play;
-        if (puerta_animacion.play) {
-            puerta_animacion.reset();
-            puerta_animacion.interpolation();
+        door_animation.toggle();
+        if (!door_animation.play) {
+            door_animation.reset();
         }
     }
     if (keys[GLFW_KEY_3]) {
+        chair_animation.toggle();
+        if (!chair_animation.play) {
+            chair_animation.reset();
+        }
+    }
+    if (keys[GLFW_KEY_4]) {
         nave_animacion.play = !nave_animacion.play;
         if (nave_animacion.play) {
             nave_animacion.reset();
             nave_animacion.interpolation();
         }
     }
-    if (keys[GLFW_KEY_4]) {
-        silla_animacion.play = !silla_animacion.play;
-        if (silla_animacion.play) {
-            silla_animacion.reset();
-            silla_animacion.interpolation();
-        }
-    }
+
     if (keys[GLFW_KEY_5]) {
         head_animation.play = !head_animation.play;
         body_animation.play = !body_animation.play;
@@ -451,12 +456,12 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
         }
         
     }
-    if (GLFW_KEY_Q == key)
-    {
+
+    if (GLFW_KEY_Q == key){
         camera.rotateYaw(-5.0f);
     }
-    if (GLFW_KEY_E == key)
-    {
+
+    if (GLFW_KEY_E == key){
         camera.rotateYaw(5.0f);
     }
 }
