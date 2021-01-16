@@ -38,7 +38,6 @@ void main()
 	// Specular shadding
     vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1.0f);
     
 	// Ambient
     vec3 ambient = light.ambient * material.ambient;

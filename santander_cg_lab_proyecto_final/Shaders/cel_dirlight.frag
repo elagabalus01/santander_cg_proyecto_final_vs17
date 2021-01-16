@@ -36,7 +36,7 @@ void main()
 
 	//Specular shadding 
 	vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16.0);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 15.0);
 
 	//Ambient light
 	vec3 ambient = light.ambient * texture_color;
@@ -45,7 +45,7 @@ void main()
     vec3 diffuse = light.diffuse * diff * texture_color;
     
 	//SpecularLight
-    vec3 specular = light.specular * spec * texture_color;
+    vec3 specular = light.specular * pow(spec,1) * texture_color;
 	
 	//Implementando el cel shader
     float intensity = 0.6*diff+0.4*spec;
@@ -67,6 +67,8 @@ void main()
 	else {
         intensity = 0.5;
     }
+	vec3 lightPower = vec3(1.0f,1.0f,1.0f);
 	vec3 result =  ambient + diffuse + specular;
+	//FragColor = vec4(result*intensity,1);
 	FragColor = vec4(result*intensity,1);
 }
